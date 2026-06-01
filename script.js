@@ -56,7 +56,7 @@ function render() {
     el.style.height = `${(piece.h / ROWS) * 100}%`;
     el.setAttribute("aria-pressed", String(piece.id === selectedId));
     el.setAttribute("aria-label", `${piece.label}, ${piece.w} por ${piece.h}`);
-    el.textContent = piece.label;
+    el.title = piece.label;
     el.addEventListener("click", () => selectPiece(piece.id));
     board.appendChild(el);
   });
