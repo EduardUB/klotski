@@ -4,6 +4,7 @@ const bestScore = document.querySelector("#bestScore");
 const hint = document.querySelector("#hint");
 const toast = document.querySelector("#toast");
 const resetButton = document.querySelector("#resetButton");
+const solutionButton = document.querySelector("#solutionButton");
 const undoButton = document.querySelector("#undoButton");
 const dpadButtons = document.querySelectorAll("[data-dir]");
 
@@ -11,6 +12,12 @@ const COLS = 4;
 const ROWS = 5;
 const WIN = { x: 1, y: 3 };
 const BEST_KEY = "klotski-best-score";
+const kindNames = {
+  hero: "pieza objetivo",
+  vertical: "pieza vertical",
+  horizontal: "pieza horizontal",
+  small: "pieza pequena",
+};
 
 const startPieces = [
   { id: "cao", label: "Cao Cao", kind: "hero", x: 1, y: 0, w: 2, h: 2 },
@@ -25,6 +32,74 @@ const startPieces = [
   { id: "s4", label: "Soldado", kind: "small", x: 3, y: 4, w: 1, h: 1 },
 ];
 
+const solutionMoves = [
+  ["horizontal", 1, 3, "down"],
+  ["small", 1, 2, "down"],
+  ["small", 1, 3, "right"],
+  ["vertical", 0, 2, "right"],
+  ["vertical", 0, 0, "down"],
+  ["vertical", 0, 1, "down"],
+  ["hero", 1, 0, "left"],
+  ["small", 2, 2, "up"],
+  ["small", 2, 1, "up"],
+  ["small", 2, 3, "up"],
+  ["small", 2, 2, "up"],
+  ["vertical", 3, 2, "left"],
+  ["small", 3, 4, "up"],
+  ["horizontal", 1, 4, "right"],
+  ["small", 0, 4, "right"],
+  ["small", 3, 3, "right"],
+  ["vertical", 2, 2, "right"],
+  ["vertical", 1, 2, "right"],
+  ["small", 1, 4, "up"],
+  ["small", 0, 4, "right"],
+  ["vertical", 0, 2, "down"],
+  ["hero", 0, 0, "down"],
+  ["small", 2, 0, "left"],
+  ["small", 1, 0, "left"],
+  ["small", 2, 1, "up"],
+  ["vertical", 2, 2, "up"],
+  ["small", 2, 0, "left"],
+  ["vertical", 2, 1, "up"],
+  ["vertical", 3, 2, "left"],
+  ["vertical", 0, 3, "left"],
+  ["small", 1, 3, "left"],
+  ["small", 0, 3, "down"],
+  ["hero", 0, 1, "down"],
+  ["small", 0, 0, "down"],
+  ["small", 1, 0, "left"],
+  ["vertical", 2, 0, "left"],
+  ["vertical", 3, 0, "left"],
+  ["small", 0, 1, "left"],
+  ["small", 0, 0, "down"],
+  ["small", 3, 0, "down"],
+  ["small", 0, 1, "left"],
+  ["vertical", 1, 0, "left"],
+  ["vertical", 2, 0, "left"],
+  ["vertical", 2, 2, "up"],
+  ["small", 3, 0, "left"],
+  ["small", 3, 1, "up"],
+  ["vertical", 3, 2, "up"],
+  ["horizontal", 2, 4, "up"],
+  ["small", 1, 4, "right"],
+  ["small", 0, 4, "right"],
+  ["small", 2, 4, "right"],
+  ["small", 1, 4, "right"],
+  ["hero", 0, 2, "down"],
+  ["vertical", 0, 0, "down"],
+  ["vertical", 1, 0, "down"],
+  ["small", 2, 0, "left"],
+  ["small", 1, 0, "left"],
+  ["small", 3, 0, "left"],
+  ["vertical", 3, 1, "up"],
+  ["small", 2, 0, "left"],
+  ["vertical", 2, 1, "up"],
+  ["horizontal", 2, 3, "up"],
+  ["small", 2, 4, "up"],
+  ["small", 2, 3, "right"],
+  ["hero", 0, 3, "right"],
+];
+
 let pieces = clonePieces(startPieces);
 let selectedId = "cao";
 let moves = 0;
@@ -32,6 +107,8 @@ let history = [];
 let pointerStart = null;
 let won = false;
 let toastTimer = null;
+let isPlayingSolution = false;
+let solutionTimer = null;
 
 function clonePieces(source) {
   return source.map((piece) => ({ ...piece }));
@@ -55,20 +132,20 @@ function render() {
     el.style.width = `${(piece.w / COLS) * 100}%`;
     el.style.height = `${(piece.h / ROWS) * 100}%`;
     el.setAttribute("aria-pressed", String(piece.id === selectedId));
-    el.setAttribute("aria-label", `${piece.label}, ${piece.w} por ${piece.h}`);
-    el.title = piece.label;
+    el.setAttribute("aria-label", `${kindNames[piece.kind]}, ${piece.w} por ${piece.h}`);
     el.addEventListener("click", () => selectPiece(piece.id));
     board.appendChild(el);
   });
 
   moveCount.textContent = moves;
   bestScore.textContent = localStorage.getItem(BEST_KEY) || "--";
-  undoButton.disabled = history.length === 0 || won;
+  undoButton.disabled = history.length === 0 || won || isPlayingSolution;
+  solutionButton.disabled = isPlayingSolution;
 }
 
 function selectPiece(id) {
   selectedId = id;
-  hint.textContent = `Seleccionada: ${pieceById(id).label}. Desliza o usa las flechas.`;
+  hint.textContent = "Pieza seleccionada. Desliza o usa las flechas.";
   render();
 }
 
@@ -100,8 +177,8 @@ function canMove(piece, dx, dy) {
   return true;
 }
 
-function moveSelected(direction) {
-  if (won || !selectedId) {
+function moveSelected(direction, options = {}) {
+  if (won || !selectedId || (isPlayingSolution && !options.fromSolution)) {
     return;
   }
 
@@ -134,7 +211,7 @@ function moveSelected(direction) {
   piece.x += dx;
   piece.y += dy;
   moves += 1;
-  hint.textContent = `${piece.label} se ha movido.`;
+  hint.textContent = "Movimiento hecho.";
   checkWin();
   render();
 }
@@ -164,6 +241,7 @@ function checkWin() {
 }
 
 function resetGame() {
+  stopSolution();
   pieces = clonePieces(startPieces);
   selectedId = "cao";
   moves = 0;
@@ -174,6 +252,9 @@ function resetGame() {
 }
 
 function undo() {
+  if (isPlayingSolution) {
+    return;
+  }
   const last = history.pop();
   if (!last || won) {
     return;
@@ -183,6 +264,54 @@ function undo() {
   selectedId = last.selectedId;
   hint.textContent = "Movimiento deshecho.";
   render();
+}
+
+function pieceAt(kind, x, y) {
+  return pieces.find((piece) => piece.kind === kind && piece.x === x && piece.y === y);
+}
+
+function stopSolution() {
+  window.clearTimeout(solutionTimer);
+  solutionTimer = null;
+  isPlayingSolution = false;
+}
+
+function playSolutionStep(index = 0) {
+  if (!isPlayingSolution) {
+    return;
+  }
+
+  if (index >= solutionMoves.length) {
+    isPlayingSolution = false;
+    hint.textContent = "Solucion completada.";
+    showToast("Solucion completada");
+    render();
+    return;
+  }
+
+  const [kind, x, y, direction] = solutionMoves[index];
+  const piece = pieceAt(kind, x, y);
+
+  if (!piece) {
+    isPlayingSolution = false;
+    hint.textContent = "La solucion se ha detenido. Reinicia el tablero para verla otra vez.";
+    render();
+    return;
+  }
+
+  selectedId = piece.id;
+  hint.textContent = `Solucion: paso ${index + 1} de ${solutionMoves.length}.`;
+  moveSelected(direction, { fromSolution: true });
+  solutionTimer = window.setTimeout(() => playSolutionStep(index + 1), 430);
+}
+
+function playSolution() {
+  resetGame();
+  isPlayingSolution = true;
+  history = [];
+  showToast("Reproduciendo solucion");
+  render();
+  solutionTimer = window.setTimeout(() => playSolutionStep(), 360);
 }
 
 function showToast(message) {
@@ -240,6 +369,7 @@ dpadButtons.forEach((button) => {
 });
 
 resetButton.addEventListener("click", resetGame);
+solutionButton.addEventListener("click", playSolution);
 undoButton.addEventListener("click", undo);
 
 window.addEventListener("keydown", (event) => {
