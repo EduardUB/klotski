@@ -1,18 +1,18 @@
 :root {
-  color-scheme: light;
-  --bg: #f6f3ec;
-  --ink: #1e2428;
-  --muted: #677079;
-  --line: #d9d2c3;
-  --panel: #fffdf8;
-  --panel-strong: #f0eadf;
-  --accent: #c93a2f;
-  --accent-dark: #8e241f;
-  --wood: #a76f3f;
-  --jade: #217865;
-  --blue: #3a669d;
-  --gold: #b18424;
-  --shadow: 0 20px 60px rgb(55 41 22 / 18%);
+  color-scheme: only light;
+  --bg: #f7fbff;
+  --ink: #07111f;
+  --muted: #3f4c5f;
+  --line: #cbd5e1;
+  --panel: #ffffff;
+  --panel-strong: #edf2f7;
+  --accent: #ff1744;
+  --accent-dark: #c4002f;
+  --orange: #ff9500;
+  --teal: #00c2a8;
+  --blue: #006dff;
+  --gold: #ffd400;
+  --shadow: 0 20px 60px rgb(15 23 42 / 18%);
   --cell: clamp(64px, 19vw, 94px);
   font-family:
     Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -29,9 +29,10 @@ body {
 
 body {
   margin: 0;
+  background-color: var(--bg);
   background:
-    linear-gradient(140deg, rgb(201 58 47 / 12%), transparent 34%),
-    linear-gradient(320deg, rgb(33 120 101 / 12%), transparent 30%),
+    linear-gradient(140deg, rgb(255 23 68 / 16%), transparent 34%),
+    linear-gradient(320deg, rgb(0 194 168 / 18%), transparent 30%),
     var(--bg);
   color: var(--ink);
 }
@@ -55,8 +56,8 @@ button {
 }
 
 .game-shell {
-  background: color-mix(in srgb, var(--panel) 92%, white);
-  border: 1px solid rgb(106 82 45 / 18%);
+  background: color-mix(in srgb, var(--panel) 96%, white);
+  border: 1px solid rgb(23 32 42 / 12%);
   border-radius: 8px;
   box-shadow: var(--shadow);
   display: grid;
@@ -76,6 +77,11 @@ button {
 .topbar {
   justify-content: space-between;
   gap: 16px;
+}
+
+.top-actions {
+  display: flex;
+  gap: 8px;
 }
 
 .eyebrow {
@@ -106,8 +112,8 @@ h2 {
 
 .ghost-button,
 .icon-button {
-  background: var(--panel-strong);
-  border: 1px solid rgb(67 54 35 / 16%);
+  background: #ffffff;
+  border: 2px solid #111827;
   border-radius: 8px;
   cursor: pointer;
   min-height: 46px;
@@ -120,6 +126,16 @@ h2 {
 .ghost-button {
   font-weight: 800;
   padding: 0 14px;
+}
+
+.solution-button {
+  background: #ffd400;
+}
+
+.ghost-button:disabled,
+.icon-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
 }
 
 .ghost-button:active,
@@ -135,7 +151,7 @@ h2 {
 }
 
 .status-strip {
-  background: #292f31;
+  background: #17202a;
   border-radius: 8px;
   color: white;
   display: grid;
@@ -177,12 +193,12 @@ h2 {
 .board {
   aspect-ratio: 4 / 5;
   background:
-    linear-gradient(rgb(41 47 49 / 8%) 1px, transparent 1px),
-    linear-gradient(90deg, rgb(41 47 49 / 8%) 1px, transparent 1px),
-    #dfd5c2;
+    linear-gradient(rgb(7 17 31 / 24%) 2px, transparent 2px),
+    linear-gradient(90deg, rgb(7 17 31 / 24%) 2px, transparent 2px),
+    #e8f1ff;
   background-size: 25% 20%;
-  border: 8px solid #5a3924;
-  border-bottom-color: #6a4329;
+  border: 8px solid #0b1220;
+  border-bottom-color: #0b1220;
   border-radius: 8px;
   box-shadow: inset 0 0 0 1px rgb(255 255 255 / 28%);
   overflow: hidden;
@@ -210,11 +226,12 @@ h2 {
 
 .piece {
   align-items: center;
-  border: 2px solid rgb(255 255 255 / 34%);
+  border: 4px solid #ffffff;
   border-radius: 8px;
   box-shadow:
-    inset 0 -10px 22px rgb(0 0 0 / 12%),
-    0 10px 18px rgb(50 35 16 / 16%);
+    inset 0 0 0 2px rgb(0 0 0 / 28%),
+    inset 0 -14px 22px rgb(0 0 0 / 18%),
+    0 10px 18px rgb(15 23 42 / 22%);
   color: white;
   cursor: grab;
   display: flex;
@@ -232,30 +249,58 @@ h2 {
 }
 
 .piece[data-kind="hero"] {
-  background: linear-gradient(145deg, #e05243, var(--accent-dark));
+  background: #ff1744;
   font-size: clamp(1.25rem, 7vw, 2.1rem);
 }
 
 .piece[data-kind="vertical"] {
-  background: linear-gradient(145deg, #c3864b, var(--wood));
+  background: #ff9500;
   font-size: clamp(0.9rem, 4vw, 1.2rem);
 }
 
 .piece[data-kind="horizontal"] {
-  background: linear-gradient(145deg, #d2a13d, var(--gold));
+  background: #006dff;
   font-size: clamp(0.9rem, 4vw, 1.2rem);
 }
 
 .piece[data-kind="small"] {
-  background: linear-gradient(145deg, #2f8c78, var(--jade));
+  background: #00c2a8;
   font-size: clamp(0.78rem, 3.4vw, 1rem);
+}
+
+.piece[data-id="zhang"] {
+  background: #7c3aed;
+}
+
+.piece[data-id="zhao"] {
+  background: #ff9500;
+}
+
+.piece[data-id="ma"] {
+  background: #00a6ff;
+}
+
+.piece[data-id="huang"] {
+  background: #ff4d00;
+}
+
+.piece[data-id="s1"],
+.piece[data-id="s4"] {
+  background: #00c2a8;
+}
+
+.piece[data-id="s2"],
+.piece[data-id="s3"] {
+  background: #35d100;
 }
 
 .piece.selected {
   box-shadow:
-    inset 0 -10px 22px rgb(0 0 0 / 10%),
-    0 0 0 4px rgb(255 255 255 / 80%),
-    0 0 0 8px rgb(33 120 101 / 32%);
+    inset 0 0 0 2px rgb(0 0 0 / 28%),
+    inset 0 -14px 22px rgb(0 0 0 / 14%),
+    0 0 0 4px #ffffff,
+    0 0 0 9px #ffd400,
+    0 12px 22px rgb(15 23 42 / 28%);
   transform: translateY(-1px);
 }
 
@@ -378,7 +423,7 @@ h2 {
 }
 
 .toast {
-  background: #20282b;
+  background: #17202a;
   border-radius: 8px;
   bottom: max(18px, env(safe-area-inset-bottom));
   box-shadow: 0 14px 40px rgb(0 0 0 / 22%);
@@ -450,6 +495,14 @@ h2 {
   .ghost-button {
     min-height: 42px;
     padding-inline: 11px;
+  }
+
+  .topbar {
+    align-items: start;
+  }
+
+  .top-actions {
+    flex-direction: column;
   }
 
   .status-strip > div {
