@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light only" />
     <meta
       name="description"
       content="Klotski tactil y responsive para jugar en el movil o publicar en GitHub Pages."
@@ -18,7 +19,12 @@
             <p class="eyebrow">Puzzle deslizante</p>
             <h1 id="game-title">Klotski</h1>
           </div>
-          <button class="ghost-button" id="resetButton" type="button">Reiniciar</button>
+          <div class="top-actions">
+            <button class="ghost-button solution-button" id="solutionButton" type="button">
+              Solucion
+            </button>
+            <button class="ghost-button" id="resetButton" type="button">Reiniciar</button>
+          </div>
         </header>
 
         <section class="status-strip" aria-label="Estado de la partida">
