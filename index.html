@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta
+      name="description"
+      content="Klotski tactil y responsive para jugar en el movil o publicar en GitHub Pages."
+    />
+    <title>Klotski</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app" aria-labelledby="game-title">
+      <section class="game-shell">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Puzzle deslizante</p>
+            <h1 id="game-title">Klotski</h1>
+          </div>
+          <button class="ghost-button" id="resetButton" type="button">Reiniciar</button>
+        </header>
+
+        <section class="status-strip" aria-label="Estado de la partida">
+          <div>
+            <span class="label">Movimientos</span>
+            <strong id="moveCount">0</strong>
+          </div>
+          <div>
+            <span class="label">Mejor</span>
+            <strong id="bestScore">--</strong>
+          </div>
+          <div>
+            <span class="label">Objetivo</span>
+            <strong>salida</strong>
+          </div>
+        </section>
+
+        <section class="board-wrap">
+          <div
+            class="board"
+            id="board"
+            role="application"
+            aria-label="Tablero de Klotski. Toca una pieza y desliza para moverla."
+          ></div>
+          <div class="exit-marker" aria-hidden="true">Salida</div>
+        </section>
+
+        <section class="controls" aria-label="Controles">
+          <button class="icon-button" id="undoButton" type="button" aria-label="Deshacer movimiento">
+            <span class="undo-icon" aria-hidden="true"></span>
+          </button>
+          <div class="dpad" aria-label="Mover pieza seleccionada">
+            <button class="icon-button arrow up" data-dir="up" type="button" aria-label="Mover arriba"></button>
+            <button class="icon-button arrow left" data-dir="left" type="button" aria-label="Mover izquierda"></button>
+            <button class="icon-button arrow down" data-dir="down" type="button" aria-label="Mover abajo"></button>
+            <button class="icon-button arrow right" data-dir="right" type="button" aria-label="Mover derecha"></button>
+          </div>
+        </section>
+
+        <p class="hint" id="hint">
+          Toca una pieza para seleccionarla. Desliza sobre el tablero o usa los controles.
+        </p>
+      </section>
+
+      <aside class="side-panel" aria-label="Informacion del puzzle">
+        <h2>Modo clasico</h2>
+        <p>
+          Libera la pieza roja llevandola hasta la salida inferior. Cada desplazamiento de una casilla
+          cuenta como un movimiento.
+        </p>
+        <ul>
+          <li>Gestos grandes y botones comodos para pulgar.</li>
+          <li>El progreso visual se adapta a pantallas estrechas.</li>
+          <li>Sin dependencias: listo para GitHub Pages.</li>
+        </ul>
+      </aside>
+    </main>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
